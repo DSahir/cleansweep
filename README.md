@@ -18,14 +18,28 @@ CleanSweep runs **100% locally** on your machine. No system metrics, paths, or d
 
 ## 🚀 Installation & Launch
 
-### Option 1: Run Pre-Compiled App (Recommended)
+### Option 1: Install via Homebrew (Recommended for macOS)
+To bypass macOS Gatekeeper security warnings completely, install CleanSweep from source using our Homebrew formula:
+
+```bash
+brew install --HEAD https://raw.githubusercontent.com/DSahir/cleansweep/main/cleansweep.rb
+```
+
+Once installed, launch the application anytime by typing:
+```bash
+cleansweep
+```
+*Your browser will automatically open the local dashboard at [http://localhost:5051](http://localhost:5051).*
+
+---
+
+### Option 2: Download Standalone Executable (Windows)
 Download the standalone executable directly from the [Releases](https://github.com/DSahir/cleansweep/releases) section:
-- **macOS**: Drag `CleanSweep.app` into your `/Applications` folder.
-- **Windows**: Run `CleanSweep.exe`.
+- **Windows**: Run `CleanSweep.exe` directly.
 
-*Note: CleanSweep will automatically open your default browser to `http://localhost:5051` upon startup.*
+---
 
-### Option 2: Run via Terminal (CLI)
+### Option 3: Run via Git & Python Terminal
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/DSahir/cleansweep.git
@@ -42,24 +56,6 @@ Download the standalone executable directly from the [Releases](https://github.c
    python app.py
    ```
    *Your browser will automatically open the dashboard at [http://localhost:5051](http://localhost:5051).*
-
----
-
-## 📦 How to Package Standalone Binaries Locally
-We package CleanSweep using `PyInstaller` to bundle the Python runtime and dependencies:
-
-- **Build macOS Bundle**:
-  ```bash
-  pip install pyinstaller
-  pyinstaller --name="CleanSweep" --add-data="templates:templates" --noconsole --onefile app.py
-  ```
-- **Build Windows Executable**:
-  ```bash
-  pip install pyinstaller
-  pyinstaller --name="CleanSweep" --add-data="templates;templates" --noconsole --onefile app.py
-  ```
-
-The compiled binaries will be outputted to the `dist/` directory.
 
 ---
 

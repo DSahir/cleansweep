@@ -909,16 +909,15 @@
             
             <div class="download-options">
                 <!-- macOS Option -->
-                <a href="https://github.com/DSahir/cleansweep/releases" target="_blank" class="download-opt">
-                    <div class="opt-meta">
-                        <span class="opt-title">Download for macOS (.dmg)</span>
-                        <span class="opt-desc">Includes direct auto-open interface and safe cache cleaners</span>
+                <div class="download-opt" style="cursor: default;">
+                    <div class="opt-meta" style="width: 100%;">
+                        <span class="opt-title" style="color: #30D158;">Install on macOS (Primary)</span>
+                        <span class="opt-desc" style="margin-bottom: 0.5rem;">Install via Homebrew to avoid Gatekeeper quarantine warnings:</span>
+                        <div class="cli-code" style="color: #30D158; width: 100%; border-color: rgba(48,209,88,0.3); background: rgba(48,209,88,0.03);">
+                            brew install --HEAD https://raw.githubusercontent.com/DSahir/cleansweep/main/cleansweep.rb
+                        </div>
                     </div>
-                    <!-- Download Icon -->
-                    <svg class="download-icon" viewBox="0 0 24 24">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"/>
-                    </svg>
-                </a>
+                </div>
                 
                 <!-- Windows Option -->
                 <a href="https://github.com/DSahir/cleansweep/releases" target="_blank" class="download-opt">
