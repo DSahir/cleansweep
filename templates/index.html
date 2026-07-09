@@ -252,7 +252,7 @@
             justify-content: space-between;
         }
 
-        .pulse-dot {
+        .cs-pulse-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -899,12 +899,17 @@
         </div>
     </nav>
 
+    <!-- Hosted Preview Banner -->
+    <div style="background: rgba(168,85,247,0.05); border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0.75rem 1.5rem; font-size: 0.85rem; text-align: center; color: #A855F7; font-weight: 500;">
+        Hosted Preview Mode: This website is a read-only demo. Active file scans and cache cleanups run locally in the app.
+    </div>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-left">
             <h1 class="hero-title">Reclaim your workspace. Scrub hidden clutter instantly.</h1>
             <p class="hero-desc">
-                CleanSweep audits storage folders, sweeps hidden system caches, and optimizes your workspace. Secure, offline, and optimized for macOS.
+                Identify and scrub bloated browser caches, package registry dependencies, temp folders, and log files. Secure, offline, and optimized for macOS & Windows.
             </p>
             <div class="hero-actions">
                 <button class="btn btn-primary" onclick="openDownloadModal()">Get CleanSweep</button>
@@ -915,7 +920,7 @@
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                100% local. No data ever leaves your machine.
+                Local Mode runs 100% locally. Analytics & optimization execute offline.
             </div>
         </div>
 
@@ -923,7 +928,10 @@
         <div class="hero-stats-card">
             <div class="stats-card-title">
                 Telemetry Monitor
-                <div class="pulse-dot"></div>
+                <div class="cs-pulse-dot"></div>
+            </div>
+            <div style="font-size: 0.70rem; color: var(--text-muted); margin-top: -0.8rem; margin-bottom: 0.6rem;">
+                Simulated cloud preview. Local app connects directly to system metrics.
             </div>
 
             <!-- CPU -->
@@ -974,8 +982,8 @@
                 <!-- macOS Option -->
                 <div class="download-opt" style="cursor: default;">
                     <div class="opt-meta" style="width: 100%;">
-                        <span class="opt-title" style="color: #30D158;">Install on macOS (Primary)</span>
-                        <span class="opt-desc" style="margin-bottom: 0.5rem;">Install via Homebrew to avoid Gatekeeper quarantine warnings:</span>
+                        <span class="opt-title" style="color: #30D158;">Install on macOS (Primary / Recommended)</span>
+                        <span class="opt-desc" style="margin-bottom: 0.5rem;">Best for most macOS users. Installs via Homebrew to bypass Gatekeeper:</span>
                         <div class="cli-code" style="color: #30D158; width: 100%; border-color: rgba(48,209,88,0.3); background: rgba(48,209,88,0.03);">
                             brew install --HEAD https://raw.githubusercontent.com/DSahir/cleansweep/main/cleansweep.rb
                         </div>
@@ -985,8 +993,8 @@
                 <!-- Windows Option -->
                 <a href="https://github.com/DSahir/cleansweep/releases" target="_blank" class="download-opt">
                     <div class="opt-meta">
-                        <span class="opt-title">Download for Windows (.exe)</span>
-                        <span class="opt-desc">Standalone package including local temp scanning</span>
+                        <span class="opt-title">Download for Windows (Core Caches Only)</span>
+                        <span class="opt-desc">Standalone .exe package. Supported for Windows temporary logs and package caches (Experimental).</span>
                     </div>
                     <svg class="download-icon" viewBox="0 0 24 24">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"/>
@@ -996,7 +1004,7 @@
 
             <!-- Terminal Run details -->
             <div class="cli-instructions">
-                <h4 class="cli-title">Run via Git & Python Terminal</h4>
+                <h4 class="cli-title">For Developers & Advanced Users (All Platforms, including Linux CLI)</h4>
                 <div class="cli-code">
                     git clone https://github.com/DSahir/cleansweep.git<br>
                     cd cleansweep<br>
@@ -1015,7 +1023,7 @@
             </div>
             <div class="for-col">
                 <h3>Designers & Creatives</h3>
-                <p>Clean browser caches, cache log stores, and scratch directories without compromising files.</p>
+                <p>Scrub cache registries, web logs, and scratch folders without touching design project source files.</p>
             </div>
             <div class="for-col">
                 <h3>Power Users</h3>
@@ -1050,6 +1058,32 @@
                 </svg>
                 <h4>3. Clean Caches</h4>
                 <p>Scrub cache pools instantly. Safety gates protect your home files and system resources.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deletion Safety & Safeguards Band -->
+    <section class="safety-band" style="max-width: 1200px; margin: 2rem auto 0 auto; padding: 0 2rem; width: 100%;">
+        <div style="background: rgba(16,185,129,0.02); border: 1px solid var(--border-color); border-left: 4px solid var(--color-disk); border-radius: 8px; padding: 1.8rem; display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.60rem;">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--color-disk)" stroke-width="2" fill="none" style="flex-shrink: 0;">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <h3 style="font-size: 1.15rem; font-weight: 600; color: #FFFFFF;">Built-in Deletion Safeguards</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; font-size: 0.9rem;">
+                <div>
+                    <strong style="color: #FFFFFF; display: block; margin-bottom: 0.25rem;">1. Dry-Run Verification</strong>
+                    <span style="color: var(--text-muted);">CleanSweep compiles a safe manifest first. No files are deleted until you review and confirm.</span>
+                </div>
+                <div>
+                    <strong style="color: #FFFFFF; display: block; margin-bottom: 0.25rem;">2. What is Never Deleted</strong>
+                    <span style="color: var(--text-muted);">Personal files (Documents, Desktop, Downloads, Pictures), source code projects, and git repos are skipped.</span>
+                </div>
+                <div>
+                    <strong style="color: #FFFFFF; display: block; margin-bottom: 0.25rem;">3. Allowlist Path Auditing</strong>
+                    <span style="color: var(--text-muted);">Every path resolves absolute symlinks using Path.resolve() to prevent parent traversal overrides.</span>
+                </div>
             </div>
         </div>
     </section>
@@ -1107,14 +1141,19 @@
     <!-- Closing CTA Band -->
     <section class="closing-band">
         <h2>Ready to optimize your workspace?</h2>
-        <p>Scrub cache locks, analyze directory branches, and accelerate system performance.</p>
+        <p>Scrub cache directories, clean logs, and prune bloated package dependencies.</p>
         <button class="btn btn-primary btn-large" onclick="openDownloadModal()">Get CleanSweep</button>
+    </section>
+
+    <!-- Footer Disclaimer & Details -->
+    <section style="max-width: 1200px; margin: 0 auto; padding: 2rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+        <strong>System Posture & Limitations:</strong> Standalone compiled packages (.app) are unsigned. macOS users may experience Gatekeeper alerts and are recommended to install warning-free via the Homebrew path. Windows support covers core package manager registry and browser caches. Linux CLI support is experimental. Actual disk cleaning requires running in local mode.
     </section>
 
     <!-- Footer -->
     <footer>
         <div class="footer-left">
-            &copy; 2026 CleanSweep. Optimized for macOS. 100% Offline.
+            &copy; 2026 CleanSweep. Optimized for macOS & Windows. 100% Offline.
         </div>
         <div class="footer-links">
             <a href="/docs" class="footer-link">Docs</a>

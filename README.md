@@ -32,13 +32,25 @@ CleanSweep operates in a hybrid, local-first configuration to ensure absolute da
 - **Local Application (Primary):** The fully-functional, offline-first optimizer runs entirely on your host machine. The local Flask server communicates only with your browser loop at `http://localhost:5051`. **Your file paths and telemetry metrics never communicate with any external server.**
 - **Hosted Cloud Preview (`cleansweep-blush.vercel.app`):** This serves as a read-only telemetry preview and documentation shell. For safety, folder scanning and cache deletion API endpoints are **disabled/mocked** in the hosted Vercel deployment.
 
+### Capabilities Comparison
+
+| Capability / Feature | Hosted Vercel Preview | Local Client (Homebrew / Python) |
+| :--- | :--- | :--- |
+| **Read/Write Filesystem Access** | ❌ Locked / Read-Only Sandbox | ✅ Local Host File Access |
+| **File Scan Audits** | ❌ Disabled (Simulated Preview List) | ✅ Live Local Scanning |
+| **System Caches Purge** | ❌ Blocked by Serverless Constraints | ✅ One-Click Active Deletion |
+| **Host Telemetry (CPU/RAM/Disk)** | ⚠️ Simulated Mockup Stats | ✅ Real-Time Local Hooks |
+| **Privacy & Offline Guarantee** | ✅ Static Shell (No local reads) | ✅ 100% Offline (No external connections) |
+
 ---
 
 ## 📦 Platform Support Matrix
 
-- **macOS (Primary / Fully Supported):** Full optimization suite, including Apple cache sweepers (Safari caches, Xcode log folders, and DerivedData) and one-click Homebrew cleanups.
-- **Windows (Supported / Core Features):** Sweeps package manager registry caches (npm, Cargo, Pip), local browser caches (Chrome), and system temp directories.
-- **Linux (Experimental / CLI-Only):** Command-line scanning directly from Python source (no automated dashboard shortcuts).
+| Platform OS | Support Status | Included Sweep Capabilities | Install Formats |
+| :--- | :--- | :--- | :--- |
+| **macOS** | 🥇 Primary / Full Support | Apple Developer Caches (Safari, Xcode DerivedData, Logs, Homebrew Cache) | Homebrew Formula (HEAD), Git Source |
+| **Windows** | 🥈 Core Support | System temp directories, Chrome browser cache, Package manager cache (npm, Cargo, Pip) | Standalone .exe Package, Git Source |
+| **Linux** | 🥉 Experimental Support | Command Line Interface (CLI) scan controls and Python package dependencies only | Git Source / CLI Only |
 
 ---
 
@@ -65,7 +77,7 @@ Download the standalone executable directly from the [Releases](https://github.c
 
 ---
 
-### Option 3: Run via Git & Python Terminal (All Platforms)
+### Option 3: Run via Git & Python Terminal (For Developers)
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/DSahir/cleansweep.git
@@ -90,4 +102,9 @@ Download the standalone executable directly from the [Releases](https://github.c
 CleanSweep implements a strict allowlist constraint system inside `cleaner/cache_cleaner.py`:
 - **Path Resolution:** Every target path resolves absolute links via `Path.resolve()` to prevent parent path traversal hacks (`../../`).
 - **Constrained Roots:** File scans are restricted to explicit configuration cache directories.
-- **Protected Files:** User documents (Desktop, Documents, Downloads, pictures) and system-critical system bins are explicitly ignored.
+- **Explicit Exclusions:** Even if a path resides inside an allowlisted folder, CleanSweep explicitly skips files matching custom sensitive patterns:
+  - System directories: `/System`, `/usr`, `/etc`, `/bin`, `/sbin`, `/Library/SystemProfiler`
+  - Security/Access keys: `~/.ssh`, `~/.aws`, `.env` configurations
+  - Hidden revision folders: `.git`, `.github` pipelines
+- **What is Never Deleted:** Personal user directories (`Documents`, `Desktop`, `Downloads`, `Pictures`, `Music`, `Movies`) are fully ignored.
+- **Dry-run verification:** CleanSweep compiles a safe manifest first. No files are modified until you review and confirm.

@@ -289,6 +289,34 @@
             margin-bottom: 1.2rem;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0 2rem 0;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-bottom: 2px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        tr:hover td {
+            color: #FFFFFF;
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
         /* Footer */
         footer {
             border-top: 1px solid var(--border-color);
@@ -356,6 +384,11 @@
         </div>
     </nav>
 
+    <!-- Hosted Preview Banner -->
+    <div style="background: rgba(168,85,247,0.05); border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0.75rem 1.5rem; font-size: 0.85rem; text-align: center; color: #A855F7; font-weight: 500;">
+        Hosted Preview Mode: This website is a read-only demo. Active file scans and cache cleanups run locally in the app.
+    </div>
+
     <!-- Docs Layout -->
     <div class="docs-container">
         
@@ -378,11 +411,14 @@
             
             <section class="docs-section" id="how-it-works">
                 <h1>How CleanSweep Works</h1>
+                <p style="background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 0.8rem 1rem; color: #F87171; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    <strong>Notice:</strong> This cloud-hosted site at Vercel is a read-only telemetry preview. For safety, actual file scans, allowlist queries, and directory cleanups are disabled in deployment.
+                </p>
                 <p>
                     CleanSweep is an offline-first system optimizer. It scans temporary directories, cache folders, and package manager locations in your local home directory to identify space that can be reclaimed.
                 </p>
                 <p>
-                    The scanning and deletion are handled completely by a lightweight local Python backend (`Flask`). The visual dashboard is a standard client-side HTML interface that retrieves analytics dynamically from local API endpoints.
+                    The scanning and deletion are handled completely by a lightweight local Python backend (<code>Flask</code>). The visual dashboard is a standard client-side HTML interface that retrieves analytics dynamically from local API endpoints.
                 </p>
             </section>
 
@@ -403,6 +439,44 @@
                     <h4>No Remote Tracking</h4>
                     <p>There is no database or network connection between your local client installation and the hosted cloud preview. They are fully decoupled environments. Your file paths and local telemetry never communicate externally.</p>
                 </div>
+
+                <h3>Capabilities Comparison</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Capability / Feature</th>
+                            <th>Hosted Vercel Preview</th>
+                            <th>Local Client (Homebrew / Python)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Read/Write Filesystem Access</strong></td>
+                            <td>❌ Locked / Read-Only Sandbox</td>
+                            <td>✅ Local Host File Access</td>
+                        </tr>
+                        <tr>
+                            <td><strong>File Scan Audits</strong></td>
+                            <td>❌ Disabled (Simulated Preview List)</td>
+                            <td>✅ Live Local Scanning</td>
+                        </tr>
+                        <tr>
+                            <td><strong>System Caches Purge</strong></td>
+                            <td>❌ Blocked by Serverless Constraints</td>
+                            <td>✅ One-Click Active Deletion</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Host Telemetry (CPU/RAM/Disk)</strong></td>
+                            <td>⚠️ Simulated Mockup Stats</td>
+                            <td>✅ Real-Time Local Hooks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Privacy & Offline Guarantee</strong></td>
+                            <td>✅ Static Shell (No local reads)</td>
+                            <td>✅ 100% Offline (No external connections)</td>
+                        </tr>
+                    </tbody>
+                </table>
             </section>
 
             <section class="docs-section" id="privacy-model">
@@ -424,7 +498,13 @@
                 <ul>
                     <li><strong>Directory Boundary Auditing:</strong> Every deletion candidate path is resolved using <code>Path.resolve()</code> to remove symlink masking or parent directory traversal hacks (e.g. <code>../../</code>).</li>
                     <li><strong>Allowlisted Cache Roots:</strong> Deletion is strictly constrained to specific folders defined in your <code>config.py</code> (e.g., specific user browser cache subfolders, Pip cache subdirectories, and npm cache folders).</li>
-                    <li><strong>Protected Files & Extensions:</strong> System configuration files, hidden git repositories (<code>.git</code>), hidden key files, and active development environments are explicitly protected.</li>
+                    <li><strong>Explicit Exclusions / Blocklist Guard:</strong> Even if a path resides inside an allowlisted folder, CleanSweep explicitly skips files matching custom sensitive patterns:
+                        <ul>
+                            <li>System directories: <code>/System</code>, <code>/usr</code>, <code>/etc</code>, <code>/bin</code>, <code>/sbin</code>, <code>/Library/SystemProfiler</code></li>
+                            <li>Security/Access keys: <code>~/.ssh</code>, <code>~/.aws</code>, <code>.env</code> configurations</li>
+                            <li>Hidden revision folders: <code>.git</code>, <code>.github</code> pipelines</li>
+                        </ul>
+                    </li>
                 </ul>
 
                 <h3>Path Allowlist Code Validation</h3>
@@ -507,22 +587,43 @@ def is_safe_path(path: Path) -> bool:
                 <p>
                     CleanSweep adapts its scanning paths dynamically depending on the host OS. Support levels are defined as follows:
                 </p>
-                <ul>
-                    <li>
-                        <strong>macOS (Primary / Fully Supported):</strong> Full optimization suite, including Apple cache sweepers (Safari caches, Xcode log folders, DerivedData) and automated Homebrew cleanup.
-                    </li>
-                    <li>
-                        <strong>Windows (Supported / Core Features):</strong> Sweeps package manager registry caches (npm, Cargo, Pip), local browser caches (Chrome), and system temp directories.
-                    </li>
-                    <li>
-                        <strong>Linux (Experimental / CLI-Only):</strong> Command-line execution from source code (manual setup). No GUI or native app shortcuts are distributed.
-                    </li>
-                </ul>
 
-                <h3>Additional Notes</h3>
+                <h3>Platform Support Matrix</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Platform OS</th>
+                            <th>Support Status</th>
+                            <th>Included Sweep Capabilities</th>
+                            <th>Install Formats</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>macOS</strong></td>
+                            <td>🥇 Primary / Full Support</td>
+                            <td>Apple Developer Caches (Safari, Xcode DerivedData, Logs, Homebrew Cache)</td>
+                            <td>Homebrew Formula (HEAD), Git Source</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Windows</strong></td>
+                            <td>🥈 Core Support</td>
+                            <td>System temp directories, Chrome browser cache, Package manager cache (npm, Cargo, Pip)</td>
+                            <td>Standalone .exe Package, Git Source</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Linux</strong></td>
+                            <td>🥉 Experimental Support</td>
+                            <td>Command Line Interface (CLI) scan controls and Python package dependencies only</td>
+                            <td>Git Source / CLI Only</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Additional Notes & Caveats</h3>
                 <ul>
-                    <li><strong>Unsigned Bundles:</strong> Standalone compiled packages (<code>.app</code> for macOS) are unsigned by default. If you experience Gatekeeper warnings, we recommend installing cleanly via our Homebrew formula script.</li>
-                    <li><strong>macOS Telemetry:</strong> macOS telemetry depends on the <code>psutil</code> system hook to query CPU, memory, and disk telemetry.</li>
+                    <li><strong>macOS Gatekeeper:</strong> Standalone compiled packages (<code>.app</code>) are unsigned. macOS users are recommended to install warning-free via the Homebrew HEAD formula to bypass quarantine blocks.</li>
+                    <li><strong>macOS Telemetry:</strong> Native system stats require the <code>psutil</code> Python hook.</li>
                 </ul>
             </section>
 
@@ -532,7 +633,7 @@ def is_safe_path(path: Path) -> bool:
     <!-- Footer -->
     <footer>
         <div class="footer-left">
-            &copy; 2026 CleanSweep. Optimized for macOS. 100% Offline.
+            &copy; 2026 CleanSweep. Optimized for macOS & Windows. 100% Offline.
         </div>
         <div class="footer-links">
             <a href="/docs" class="footer-link">Docs</a>
