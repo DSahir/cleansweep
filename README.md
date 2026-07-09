@@ -19,7 +19,7 @@
 
 ## 🖥️ Product Preview
 
-![CleanSweep Dashboard Mockup](assets/dashboard.png)
+![CleanSweep Dashboard Mockup](assets/dashboard_mockup.png)
 
 *The CleanSweep dashboard provides a dark, Vercel-inspired telemetry and cache scanning interface, run 100% locally and privately.*
 
