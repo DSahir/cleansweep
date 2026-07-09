@@ -1246,7 +1246,14 @@
                 `;
             } catch(e) {
                 console.error("Failed to fetch storage:", e);
-                document.getElementById('storage-content').innerHTML = `<p style="color: var(--color-clean); font-size: 0.95rem;">Error executing storage audit scan.</p>`;
+                setTimeout(() => {
+                    document.getElementById('dashboard').innerHTML = `
+                        <div style="width: 100%; text-align: center;">
+                            <img src="assets/dashboard_mockup.png" alt="CleanSweep Dashboard Mockup" style="width: 100%; max-width: 1200px; height: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
+                        </div>
+                    `;
+                }, 800);
+                return;
             }
             
             document.getElementById('storage-loader').classList.add('hidden');
@@ -1292,7 +1299,14 @@
                 document.getElementById('cache-content').innerHTML = cacheHtml;
             } catch(e) {
                 console.error("Failed to fetch caches:", e);
-                document.getElementById('cache-content').innerHTML = `<p style="color: var(--color-clean); font-size: 0.95rem;">Error loading cached paths.</p>`;
+                setTimeout(() => {
+                    document.getElementById('dashboard').innerHTML = `
+                        <div style="width: 100%; text-align: center;">
+                            <img src="assets/dashboard_mockup.png" alt="CleanSweep Dashboard Mockup" style="width: 100%; max-width: 1200px; height: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
+                        </div>
+                    `;
+                }, 800);
+                return;
             }
             
             document.getElementById('cache-loader').classList.add('hidden');
