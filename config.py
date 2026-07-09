@@ -6,6 +6,8 @@ import os
 import sys
 from pathlib import Path
 
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+
 # ─── Base Paths ───────────────────────────────────────────────────────────────
 
 HOME = Path.home()
@@ -175,7 +177,7 @@ DEFAULT_SCAN_DIRS = [
 
 # ─── Archive Settings ────────────────────────────────────────────────────────
 
-ARCHIVE_DIR = HOME / "Archives" / "CleanSweep"
+ARCHIVE_DIR = Path("/tmp/cleansweep/archives") if IS_VERCEL else HOME / "Archives" / "CleanSweep"
 
 # ─── Environment Detection Paths ─────────────────────────────────────────────
 
@@ -388,5 +390,5 @@ FLASK_DEBUG = True
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 
-LOG_DIR = HOME / ".cleansweep" / "logs"
-MANIFEST_DIR = HOME / ".cleansweep" / "manifests"
+LOG_DIR = Path("/tmp/cleansweep/logs") if IS_VERCEL else HOME / ".cleansweep" / "logs"
+MANIFEST_DIR = Path("/tmp/cleansweep/manifests") if IS_VERCEL else HOME / ".cleansweep" / "manifests"

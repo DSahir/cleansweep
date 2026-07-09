@@ -9,6 +9,13 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
+# Initialize logging first to ensure 'logger' is defined for startup exceptions
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s'
+)
+logger = logging.getLogger("cleansweep")
+
 from flask import Flask, render_template, jsonify, request
 
 # Ensure project root is importable
@@ -48,12 +55,7 @@ for d in [LOG_DIR, MANIFEST_DIR, ARCHIVE_DIR]:
     except OSError as e:
         logger.warning(f"Could not create directory {d} (expected on read-only environments like Vercel): {e}")
 
-# Logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
-)
-logger = logging.getLogger("cleansweep")
+
 
 # ─── Page Routes ──────────────────────────────────────────────────────────────
 
