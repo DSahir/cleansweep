@@ -64,6 +64,12 @@ def index():
     """Serve the main dashboard."""
     return render_template("index.html")
 
+
+@app.route("/docs")
+def docs():
+    """Serve the documentation and safety page."""
+    return render_template("docs.html")
+
 # ─── System Stats API ────────────────────────────────────────────────────────
 
 @app.route("/api/system/stats")

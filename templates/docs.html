@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanSweep — Documentation & Security Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0A0A0A;
+            --bg-card: #121212;
+            --border-color: #262626;
+            --border-hover: #404040;
+            --text-primary: #FFFFFF;
+            --text-muted: #A3A3A3;
+            
+            --color-cpu: #3B82F6;
+            --color-memory: #A855F7;
+            --color-disk: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 3rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+        }
+
+        .nav-logo svg {
+            width: 20px;
+            height: 20px;
+            fill: #FFFFFF;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+        }
+
+        .btn-nav {
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: opacity 0.15s ease;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.9;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 101;
+        }
+
+        .nav-toggle svg {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.2rem 1.5rem;
+            }
+            .nav-toggle {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: rgba(10, 10, 10, 0.98);
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.5rem;
+                gap: 1.25rem;
+                align-items: stretch;
+                z-index: 99;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .btn-nav {
+                width: 100%;
+                text-align: center;
+                padding: 0.6rem;
+            }
+        }
+
+        /* Docs Layout */
+        .docs-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 4rem;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 900px) {
+            .docs-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                margin: 1.5rem auto;
+            }
+        }
+
+        /* Sidebar navigation */
+        .docs-sidebar {
+            position: sticky;
+            top: 6rem;
+            height: fit-content;
+        }
+
+        @media (max-width: 900px) {
+            .docs-sidebar {
+                position: static;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 1.5rem;
+            }
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .sidebar-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.15s ease;
+        }
+
+        .sidebar-link:hover {
+            color: #FFFFFF;
+        }
+
+        /* Main Content styles */
+        .docs-content {
+            max-width: 800px;
+        }
+
+        .docs-section {
+            margin-bottom: 3.5rem;
+            scroll-margin-top: 6rem;
+        }
+
+        .docs-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+        }
+
+        .docs-section h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .docs-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .docs-section p {
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .docs-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .docs-card h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .docs-card p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #A855F7;
+            overflow-x: auto;
+            margin-bottom: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        .footer-left {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .footer-link:hover {
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav>
+        <div class="nav-logo" onclick="window.location.href='/'">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+                <path d="M19.5 3.5a1 1 0 0 0-1.4 0L14 7.6 12 5.6a1 1 0 0 0-1.4 1.4l2 2-3.1 3.1-4-4a1 1 0 1 0-1.4 1.4l4 4-2.2 2.2c-.8.8-.8 2 0 2.8l2.5 2.5c.8.8 2 .8 2.8 0l2.2-2.2 4 4a1 1 0 1 0 1.4-1.4l-4-4 3.1-3.1 2 2a1 1 0 1 0 1.4-1.4l-2-2 4.1-4.1a1 1 0 0 0 0-1.4zM9 19.5c-.3 0-.5-.1-.7-.3l-2.5-2.5c-.4-.4-.4-1 0-1.4l1.5-1.5 3.9 3.9-1.5 1.5c-.2.2-.4.3-.7.3z" fill="#FFFFFF"/>
+            </svg>
+            CleanSweep
+        </div>
+        <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <div class="nav-links">
+            <a href="/#how-it-works" class="nav-link">How it works</a>
+            <a href="/#dashboard" class="nav-link">Optimizer</a>
+            <a href="/docs" class="nav-link" style="color: #FFFFFF;">Docs</a>
+            <a href="https://github.com/DSahir/cleansweep" target="_blank" class="nav-link">GitHub</a>
+            <button class="btn-nav" onclick="window.location.href='/'">Go to Dashboard</button>
+        </div>
+    </nav>
+
+    <!-- Docs Layout -->
+    <div class="docs-container">
+        
+        <!-- Sidebar -->
+        <div class="docs-sidebar">
+            <h4 class="sidebar-title">Documentation</h4>
+            <div class="sidebar-links">
+                <a href="#how-it-works" class="sidebar-link">How it Works</a>
+                <a href="#privacy-model" class="sidebar-link">Privacy Model</a>
+                <a href="#safety-gates" class="sidebar-link">Safety Gates</a>
+                <a href="#scanned-paths" class="sidebar-link">What gets Cleaned</a>
+                <a href="#never-deleted" class="sidebar-link">What is Never Deleted</a>
+                <a href="#limitations" class="sidebar-link">Known Limitations</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="docs-content">
+            
+            <section class="docs-section" id="how-it-works">
+                <h1>How CleanSweep Works</h1>
+                <p>
+                    CleanSweep is an offline-first system optimizer. It scans temporary directories, cache folders, and package manager locations in your local home directory to identify space that can be reclaimed.
+                </p>
+                <p>
+                    The scanning and deletion are handled completely by a lightweight local Python backend (`Flask`). The visual dashboard is a standard client side HTML interface that retrieves analytics dynamically from local API endpoints.
+                </p>
+            </section>
+
+            <section class="docs-section" id="privacy-model">
+                <h2>Privacy & Threat Model</h2>
+                <div class="docs-card" style="border-left: 4px solid var(--color-cpu);">
+                    <h4>100% Offline by Design</h4>
+                    <p>CleanSweep executes entirely on your host CPU. It makes zero external telemetry reports, tracking metrics, or analytics calls. Your local path folders, usernames, and metrics never leave your computer.</p>
+                </div>
+                <p>
+                    Because CleanSweep does not use a cloud agent, it runs with minimal threat overhead. The source code is open, auditable, and carries no third-party telemetry integrations.
+                </p>
+            </section>
+
+            <section class="docs-section" id="safety-gates">
+                <h2>Safety Gates</h2>
+                <p>
+                    To prevent accidental file deletion or damage to essential system/user paths, CleanSweep implements a strict allowlist matching filter:
+                </p>
+                <ul>
+                    <li><strong>Directory Boundary Auditing:</strong> Every deletion candidate path is resolved using `Path.resolve()` to remove symlink masking or parent directory traversal hacks (e.g. `../../`).</li>
+                    <li><strong>Allowlisted Cache Roots:</strong> Deletion is strictly constrained to specific folders defined in your `config.py` (e.g., specific user browser cache subfolders, Pip cache subdirectories, and npm cache folders).</li>
+                    <li><strong>Protected Files & Extensions:</strong> System configuration files, hidden git repositories (`.git`), hidden key files, and essential library environments are explicitly protected.</li>
+                </ul>
+            </section>
+
+            <section class="docs-section" id="scanned-paths">
+                <h2>What gets Scanned & Cleaned</h2>
+                <p>
+                    Only specific non-critical temporary folders are touched during scans:
+                </p>
+                
+                <h3>1. Browser Cache Locations</h3>
+                <ul>
+                    <li>Google Chrome caches: `~/Library/Caches/Google/Chrome`</li>
+                    <li>Safari caches: `~/Library/Caches/com.apple.Safari`</li>
+                </ul>
+
+                <h3>2. Package Managers Caches</h3>
+                <ul>
+                    <li><strong>npm cache:</strong> `~/.npm/_cacache`</li>
+                    <li><strong>Cargo (Rust) cache:</strong> `~/.cargo/registry/cache`</li>
+                    <li><strong>Pip (Python) cache:</strong> `~/Library/Caches/pip`</li>
+                    <li><strong>Conda environment cache:</strong> `~/.conda/pkgs`</li>
+                </ul>
+
+                <h3>3. OS Temp Files</h3>
+                <ul>
+                    <li>System temp directories (`/tmp` or user-level environment temp folders).</li>
+                    <li>Application log files under `~/Library/Logs`.</li>
+                </ul>
+            </section>
+
+            <section class="docs-section" id="never-deleted">
+                <h2>What is NEVER Deleted</h2>
+                <p>
+                    CleanSweep enforces strict exclusion rules to safeguard user documents. The following paths and files are completely skipped:
+                </p>
+                <ul>
+                    <li><strong>Personal Documents:</strong> Folders like `~/Documents`, `~/Desktop`, `~/Downloads`, `~/Pictures`, `~/Music`, and `~/Movies` are never targetable by cleaners.</li>
+                    <li><strong>Project Source Code:</strong> Code structures and active workspaces are excluded.</li>
+                    <li><strong>System Roots:</strong> System files, system binary environments (`/usr/bin`, `/bin`), and operating system library assets are locked.</li>
+                </ul>
+            </section>
+
+            <section class="docs-section" id="limitations">
+                <h2>Known Limitations</h2>
+                <ul>
+                    <li><strong>Unsigned Bundles:</strong> Standalone compiled packages (`.app` for macOS) are unsigned by default. If you experience Gatekeeper warnings, we recommend installing cleanly via our Homebrew formula script.</li>
+                    <li><strong>Platform Exclusions:</strong> macOS telemetry depends on the `psutil` system hook. While compatible with Windows and Linux, cache paths are optimized for macOS developer caches.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            &copy; 2026 CleanSweep. Optimized for macOS. 100% Offline.
+        </div>
+        <div class="footer-links">
+            <a href="/docs" class="footer-link">Docs</a>
+            <a href="https://github.com/DSahir/cleansweep" target="_blank" class="footer-link">GitHub</a>
+        </div>
+    </footer>
+
+    <!-- Script Integrations -->
+    <script>
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

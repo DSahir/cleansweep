@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CleanSweep — macOS System Optimizer</title>
+    <title>CleanSweep — Cross-Platform System Optimizer (Optimized for macOS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -104,6 +104,51 @@
 
         .btn-nav:hover {
             opacity: 0.9;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 101;
+        }
+
+        .nav-toggle svg {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.2rem 1.5rem;
+            }
+            .nav-toggle {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: rgba(10, 10, 10, 0.98);
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.5rem;
+                gap: 1.25rem;
+                align-items: stretch;
+                z-index: 99;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .btn-nav {
+                width: 100%;
+                text-align: center;
+                padding: 0.6rem;
+            }
         }
 
         /* Hero Section */
@@ -582,6 +627,14 @@
             padding-bottom: 1.2rem;
         }
 
+        @media (max-width: 600px) {
+            .panel-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
         .panel-heading {
             display: flex;
             align-items: center;
@@ -827,12 +880,19 @@
             </svg>
             CleanSweep
         </div>
+        <button class="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
         <div class="nav-links">
             <a href="#how-it-works" class="nav-link">How it works</a>
             <a href="#dashboard" class="nav-link">Optimizer</a>
-            <a href="#" class="nav-link">Docs</a>
-            <a href="#" class="nav-link">GitHub</a>
-            <button class="btn-nav" onclick="openDownloadModal()">Download</button>
+            <a href="/docs" class="nav-link">Docs</a>
+            <a href="https://github.com/DSahir/cleansweep" target="_blank" class="nav-link">GitHub</a>
+            <button class="btn-nav" onclick="openDownloadModal()">Get CleanSweep</button>
         </div>
     </nav>
 
@@ -841,10 +901,10 @@
         <div class="hero-left">
             <h1 class="hero-title">Reclaim your workspace. Scrub hidden clutter instantly.</h1>
             <p class="hero-desc">
-                CleanSweep audits storage folders, sweeps hidden system caches, and optimizes your workspace. Secure, offline, and built for macOS.
+                CleanSweep audits storage folders, sweeps hidden system caches, and optimizes your workspace. Secure, offline, and optimized for macOS.
             </p>
             <div class="hero-actions">
-                <button class="btn btn-primary" onclick="openDownloadModal()">Download for macOS</button>
+                <button class="btn btn-primary" onclick="openDownloadModal()">Get CleanSweep</button>
                 <button class="btn btn-secondary" onclick="scrollToDashboard()">See how it works</button>
             </div>
             <div class="trust-line">
@@ -1045,24 +1105,27 @@
     <section class="closing-band">
         <h2>Ready to optimize your workspace?</h2>
         <p>Scrub cache locks, analyze directory branches, and accelerate system performance.</p>
-        <button class="btn btn-primary btn-large" onclick="openDownloadModal()">Download CleanSweep</button>
+        <button class="btn btn-primary btn-large" onclick="openDownloadModal()">Get CleanSweep</button>
     </section>
 
     <!-- Footer -->
     <footer>
         <div class="footer-left">
-            &copy; 2026 CleanSweep. Built for macOS. 100% Offline.
+            &copy; 2026 CleanSweep. Optimized for macOS. 100% Offline.
         </div>
         <div class="footer-links">
-            <a href="#" class="footer-link">Docs</a>
-            <a href="#" class="footer-link">GitHub</a>
-            <a href="#" class="footer-link">Privacy</a>
-            <a href="#" class="footer-link">Contact</a>
+            <a href="/docs" class="footer-link">Docs</a>
+            <a href="https://github.com/DSahir/cleansweep" target="_blank" class="footer-link">GitHub</a>
         </div>
     </footer>
 
     <!-- Script Integrations -->
     <script>
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
         async function fetchSystemStats() {
             try {
                 const res = await fetch('/api/system/stats');

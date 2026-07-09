@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment libraries & configs
+.venv/
+venv/
+ENV/
+env/
+dist/
+build/
+*.egg-info/
+
+# Logs
+*.log
+.cleansweep/logs/
+.cleansweep/manifests/
+
+# OS/Editor generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
