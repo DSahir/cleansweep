@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanSweep — macOS System Optimizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0A0A0A;
+            --bg-card: #121212;
+            --text-main: #FFFFFF;
+            --text-muted: #8E8E93;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.16);
+            --accent-primary: #0070F3;
+            --accent-hover: #0062D2;
+            --color-cpu: #5E5CE6;
+            --color-memory: #30D158;
+            --color-disk: #BF5AF2;
+            --color-clean: #FF453A;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 3rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .nav-logo svg {
+            width: 20px;
+            height: 20px;
+            fill: #FFFFFF;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+        }
+
+        .btn-nav {
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: opacity 0.15s ease;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.9;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 4.5rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (max-width: 960px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+                margin: 2.5rem auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 960px) {
+            .hero-left {
+                align-items: center;
+            }
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .trust-line {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* Interactive Stats Card (Hero Right) */
+        .hero-stats-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+            position: relative;
+        }
+
+        .hero-stats-card::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
+        .stats-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--color-memory);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 8px var(--color-memory); }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        .stat-bar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stat-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .stat-label {
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .progress-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.65rem 1.4rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: #FFFFFF;
+            color: #000000;
+            border: 1px solid #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background-color: #E6E6E6;
+            border-color: #E6E6E6;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #FFFFFF;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-hover);
+        }
+
+        .btn-danger {
+            background-color: rgba(255, 69, 58, 0.1);
+            color: var(--color-clean);
+            border: 1px solid rgba(255, 69, 58, 0.2);
+            font-size: 0.8rem;
+            padding: 0.35rem 0.75rem;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--color-clean);
+            color: #FFFFFF;
+        }
+
+        /* Who it's for Strip */
+        .for-strip {
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(255,255,255,0.01);
+            padding: 3rem 0;
+        }
+
+        .for-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .for-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .for-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .for-col h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .for-col p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* How it works visual flow */
+        .works-section {
+            max-width: 1200px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            letter-spacing: -0.03em;
+        }
+
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .flow-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+        }
+
+        .flow-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2.2rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            fill: none;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+        }
+
+        .flow-step h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .flow-step p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Interactive Dashboard Sections */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 3.5rem;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dashboard-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+            min-height: 520px;
+            transition: border-color 0.2s ease;
+        }
+
+        .dashboard-panel:hover {
+            border-color: var(--border-hover);
+        }
+
+        .panel-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.2rem;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .panel-heading h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .panel-icon {
+            width: 24px;
+            height: 24px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .panel-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .placeholder-text {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 4rem 0;
+            font-size: 0.95rem;
+        }
+
+        /* Storage breakdowns */
+        .storage-bar-container {
+            height: 8px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            margin: 1.2rem 0;
+        }
+
+        .storage-segment {
+            height: 100%;
+            transition: width 0.8s ease;
+        }
+
+        .category-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Lists */
+        .cache-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .cache-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cache-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .cache-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.9rem 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cache-info {
+            min-width: 0;
+            flex-grow: 1;
+            margin-right: 0.75rem;
+            text-align: left;
+        }
+
+        .cache-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cache-info p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 0.2rem;
+        }
+
+        .cache-info p.items-count {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .cache-size-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255,255,255,0.06);
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Large directories sub-section */
+        .top-dirs-box {
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .top-dirs-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        /* Loaders */
+        .loader {
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-top: 2px solid #FFFFFF;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .text-center {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Closing CTA Band */
+        .closing-band {
+            border-top: 1px solid var(--border-color);
+            padding: 6rem 2rem;
+            text-align: center;
+            background-color: rgba(255,255,255,0.005);
+        }
+
+        .closing-band h2 {
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.04em;
+        }
+
+        .closing-band p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        .footer-left {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .footer-link:hover {
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav>
+        <div class="nav-logo">
+            <!-- Sleek broom icon -->
+            <svg viewBox="0 0 24 24" width="20" height="20">
+                <path d="M19.5 3.5a1 1 0 0 0-1.4 0L14 7.6 12 5.6a1 1 0 0 0-1.4 1.4l2 2-3.1 3.1-4-4a1 1 0 1 0-1.4 1.4l4 4-2.2 2.2c-.8.8-.8 2 0 2.8l2.5 2.5c.8.8 2 .8 2.8 0l2.2-2.2 4 4a1 1 0 1 0 1.4-1.4l-4-4 3.1-3.1 2 2a1 1 0 1 0 1.4-1.4l-2-2 4.1-4.1a1 1 0 0 0 0-1.4zM9 19.5c-.3 0-.5-.1-.7-.3l-2.5-2.5c-.4-.4-.4-1 0-1.4l1.5-1.5 3.9 3.9-1.5 1.5c-.2.2-.4.3-.7.3z" fill="#FFFFFF"/>
+            </svg>
+            CleanSweep
+        </div>
+        <div class="nav-links">
+            <a href="#how-it-works" class="nav-link">How it works</a>
+            <a href="#dashboard" class="nav-link">Optimizer</a>
+            <a href="#" class="nav-link">Docs</a>
+            <a href="#" class="nav-link">GitHub</a>
+            <button class="btn-nav" onclick="scrollToDashboard()">Scan Now</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-left">
+            <h1 class="hero-title">Reclaim your workspace. Scrub hidden clutter instantly.</h1>
+            <p class="hero-desc">
+                CleanSweep audits storage folders, sweeps hidden system caches, and optimizes your workspace. Secure, offline, and built for macOS.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="scrollToDashboard()">Scan System Caches</button>
+                <button class="btn btn-secondary" onclick="scrollToDashboard()">Audit Home Directory</button>
+            </div>
+            <div class="trust-line">
+                <!-- Lock Icon -->
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                100% local. No data ever leaves your machine.
+            </div>
+        </div>
+
+        <!-- Real-Time stats card widget -->
+        <div class="hero-stats-card">
+            <div class="stats-card-title">
+                Telemetry Monitor
+                <div class="pulse-dot"></div>
+            </div>
+
+            <!-- CPU -->
+            <div class="stat-bar-group">
+                <div class="stat-bar-header">
+                    <span class="stat-label">CPU Load</span>
+                    <span class="stat-value" id="cpu-val">--%</span>
+                </div>
+                <div class="progress-track">
+                    <div id="cpu-bar" class="progress-fill" style="width: 0%; background-color: var(--color-cpu);"></div>
+                </div>
+            </div>
+
+            <!-- Memory -->
+            <div class="stat-bar-group">
+                <div class="stat-bar-header">
+                    <span class="stat-label">Memory Allocation</span>
+                    <span class="stat-value" id="mem-val">-- / --</span>
+                </div>
+                <div class="progress-track">
+                    <div id="mem-bar" class="progress-fill" style="width: 0%; background-color: var(--color-memory);"></div>
+                </div>
+            </div>
+
+            <!-- Disk -->
+            <div class="stat-bar-group">
+                <div class="stat-bar-header">
+                    <span class="stat-label">Disk Storage</span>
+                    <span class="stat-value" id="disk-val">-- / --</span>
+                </div>
+                <div class="progress-track">
+                    <div id="disk-bar" class="progress-fill" style="width: 0%; background-color: var(--color-disk);"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who it's for Strip -->
+    <section class="for-strip">
+        <div class="for-container">
+            <div class="for-col">
+                <h3>Developers & Engineers</h3>
+                <p>Scrub package caches (npm, Cargo, pip) and prune bloated compiler DerivedData folders safely.</p>
+            </div>
+            <div class="for-col">
+                <h3>Designers & Creatives</h3>
+                <p>Clean browser caches, cache log stores, and scratch directories without compromising files.</p>
+            </div>
+            <div class="for-col">
+                <h3>Power Users</h3>
+                <p>Keep your macOS workspace lean, lightweight, and running fast with zero terminal commands needed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works flow -->
+    <section class="works-section" id="how-it-works">
+        <h2 class="section-title">A 3-Step Optimizer Flow</h2>
+        <div class="flow-grid">
+            <div class="flow-step">
+                <!-- Dashboard Icon -->
+                <svg class="step-icon" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" />
+                    <path d="M9 17v-5M15 17V7" stroke="currentColor" />
+                </svg>
+                <h4>1. Check Live Metrics</h4>
+                <p>Watch system activity load to catch background applications hogging resource headroom.</p>
+            </div>
+            <div class="flow-step">
+                <!-- Folder Search Icon -->
+                <svg class="step-icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" stroke="currentColor" />
+                    <circle cx="12" cy="13" r="3" stroke="currentColor" />
+                </svg>
+                <h4>2. Scan Storage</h4>
+                <p>Analyze directories and breakdown files by categories (Code, Images, Documents).</p>
+            </div>
+            <div class="flow-step">
+                <!-- Sparkle Clean Icon -->
+                <svg class="step-icon" viewBox="0 0 24 24">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" />
+                </svg>
+                <h4>3. Clean Caches</h4>
+                <p>Scrub cache pools instantly. Safety gates protect your home files and system resources.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Dashboard Panels -->
+    <div class="dashboard-container" id="dashboard">
+        
+        <!-- Storage Overview Module -->
+        <div class="dashboard-panel">
+            <div class="panel-top">
+                <div class="panel-heading">
+                    <!-- Storage Graph Icon -->
+                    <svg class="panel-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 2v10h10" />
+                    </svg>
+                    <h3>Storage Breakdown & Audit</h3>
+                </div>
+                <button class="btn btn-secondary" onclick="fetchStorage()">Scan Storage</button>
+            </div>
+            
+            <div id="storage-loader" class="text-center hidden">
+                <div class="loader"></div>
+                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem;">Analyzing file categories...</p>
+            </div>
+            
+            <div id="storage-content" class="panel-body">
+                <p class="placeholder-text">Click Scan Storage to categorize user directory files.</p>
+            </div>
+        </div>
+
+        <!-- System Cache Sweeper Module -->
+        <div class="dashboard-panel">
+            <div class="panel-top">
+                <div class="panel-heading">
+                    <!-- Clean Broom Icon -->
+                    <svg class="panel-icon" viewBox="0 0 24 24">
+                        <path d="M18 3L6 15M6 15v3h3l12-12zM3 21h18"/>
+                    </svg>
+                    <h3>System Cache Sweeper</h3>
+                </div>
+                <button class="btn btn-secondary" onclick="fetchCaches()">Scan Caches</button>
+            </div>
+            
+            <div id="cache-loader" class="text-center hidden">
+                <div class="loader"></div>
+                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem;">Scanning developer libraries...</p>
+            </div>
+            
+            <div id="cache-content" class="cache-list panel-body">
+                <p class="placeholder-text">Click Scan Caches to inventory cleanable directories.</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Closing CTA Band -->
+    <section class="closing-band">
+        <h2>Ready to optimize your workspace?</h2>
+        <p>Scrub cache locks, analyze directory branches, and accelerate system performance.</p>
+        <button class="btn btn-primary btn-large" onclick="scrollToDashboard()">Get Started Now</button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            &copy; 2026 CleanSweep. Built for macOS. 100% Offline.
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Docs</a>
+            <a href="#" class="footer-link">GitHub</a>
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Contact</a>
+        </div>
+    </footer>
+
+    <!-- Script Integrations -->
+    <script>
+        async function fetchSystemStats() {
+            try {
+                const res = await fetch('/api/system/stats');
+                const data = await res.json();
+                if(data.cpu_percent !== undefined) {
+                    // CPU text and progress width
+                    document.getElementById('cpu-val').innerText = `${data.cpu_percent}%`;
+                    document.getElementById('cpu-bar').style.width = `${data.cpu_percent}%`;
+
+                    // Memory used/total and progress width
+                    document.getElementById('mem-val').innerText = `${data.memory_used} / ${data.memory_total}`;
+                    document.getElementById('mem-bar').style.width = `${data.memory_percent}%`;
+
+                    // Disk used/total and progress width
+                    document.getElementById('disk-val').innerText = `${data.disk_used} / ${data.disk_total}`;
+                    document.getElementById('disk-bar').style.width = `${data.disk_percent}%`;
+                }
+            } catch(e) {
+                console.error("Failed to fetch system stats:", e);
+            }
+        }
+
+        async function fetchStorage() {
+            document.getElementById('storage-content').classList.add('hidden');
+            document.getElementById('storage-loader').classList.remove('hidden');
+            
+            try {
+                const res = await fetch('/api/storage/scan');
+                const data = await res.json();
+                
+                let categoriesHtml = '';
+                let legendHtml = '';
+                let totalCatSize = 0;
+                
+                for(const [cat, info] of Object.entries(data.categories)) {
+                    totalCatSize += info.size;
+                }
+                
+                for(const [cat, info] of Object.entries(data.categories)) {
+                    if(info.size > 0) {
+                        const pct = (info.size / totalCatSize) * 100;
+                        categoriesHtml += `<div class="storage-segment" style="width: ${pct}%; background-color: ${info.color};" title="${cat}: ${info.size_formatted}"></div>`;
+                        legendHtml += `
+                            <div class="legend-item">
+                                <div class="color-dot" style="background-color: ${info.color};"></div>
+                                <span>${info.icon} <strong>${cat}</strong> (${info.size_formatted})</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                document.getElementById('storage-content').innerHTML = `
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin-bottom: 0.6rem; font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">Home Directory breakdown</h4>
+                        <div class="storage-bar-container">
+                            ${categoriesHtml}
+                        </div>
+                    </div>
+                    <div class="category-legend" style="margin-bottom: 2rem;">
+                        ${legendHtml}
+                    </div>
+                    
+                    <div class="top-dirs-box">
+                        <h3>Largest Directories</h3>
+                        <div class="cache-list" style="max-height: 200px;">
+                            ${data.top_directories.map(d => `
+                                <div class="cache-item">
+                                    <div class="cache-info">
+                                        <h4>${d.name}</h4>
+                                        <p>${d.path}</p>
+                                    </div>
+                                    <div class="cache-size-badge">
+                                        ${d.size_formatted}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } catch(e) {
+                console.error("Failed to fetch storage:", e);
+                document.getElementById('storage-content').innerHTML = `<p style="color: var(--color-clean); font-size: 0.95rem;">Error executing storage audit scan.</p>`;
+            }
+            
+            document.getElementById('storage-loader').classList.add('hidden');
+            document.getElementById('storage-content').classList.remove('hidden');
+        }
+
+        async function fetchCaches() {
+            document.getElementById('cache-content').classList.add('hidden');
+            document.getElementById('cache-loader').classList.remove('hidden');
+            
+            try {
+                const res = await fetch('/api/cache/scan');
+                const data = await res.json();
+                
+                let cacheHtml = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.6rem;">
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted);">Total Cache: ${data.summary.total_size_formatted}</h4>
+                    </div>
+                `;
+                
+                for(const item of data.summary.top_10_largest) {
+                    if(item.size > 0) {
+                        cacheHtml += `
+                            <div class="cache-item">
+                                <div class="cache-info">
+                                    <h4>${item.name}</h4>
+                                    <p>${item.path}</p>
+                                    <p class="items-count">${item.item_count} items</p>
+                                </div>
+                                <div style="display:flex; align-items:center; gap: 0.8rem;">
+                                    <div class="cache-size-badge">${item.size_formatted}</div>
+                                    <button class="btn btn-danger" onclick="cleanCachePath('${item.path}')">Clean</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                if(data.summary.total_size === 0) {
+                    cacheHtml += `<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No logs or caches found.</p>`;
+                }
+                
+                document.getElementById('cache-content').innerHTML = cacheHtml;
+            } catch(e) {
+                console.error("Failed to fetch caches:", e);
+                document.getElementById('cache-content').innerHTML = `<p style="color: var(--color-clean); font-size: 0.95rem;">Error loading cached paths.</p>`;
+            }
+            
+            document.getElementById('cache-loader').classList.add('hidden');
+            document.getElementById('cache-content').classList.remove('hidden');
+        }
+
+        async function cleanCachePath(path) {
+            if(!confirm(`Are you sure you want to clean: ${path}?`)) return;
+            try {
+                const res = await fetch('/api/cache/clean', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({path: path, dry_run: false})
+                });
+                const result = await res.json();
+                alert(`Cleaned ${result.bytes_freed_formatted || '0 B'}`);
+                fetchCaches();
+                fetchSystemStats();
+            } catch(e) {
+                alert("Error cleaning cache.");
+            }
+        }
+
+        function scrollToDashboard() {
+            document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Init
+        fetchSystemStats();
+        setInterval(fetchSystemStats, 5000);
+    </script>
+</body>
+</html>
