@@ -41,9 +41,12 @@ from cleaner.env_cleaner import (
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
-# Ensure directories exist
+# Ensure directories exist (handling read-only file systems in serverless environments)
 for d in [LOG_DIR, MANIFEST_DIR, ARCHIVE_DIR]:
-    d.mkdir(parents=True, exist_ok=True)
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        logger.warning(f"Could not create directory {d} (expected on read-only environments like Vercel): {e}")
 
 # Logging
 logging.basicConfig(

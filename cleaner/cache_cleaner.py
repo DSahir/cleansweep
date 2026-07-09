@@ -93,27 +93,33 @@ def _is_protected(path: Path) -> bool:
 
 def _ensure_log_dir() -> Path:
     """Create the log directory if it doesn't already exist and return it."""
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
     return LOG_DIR
 
 
 def _write_log(log_data: dict) -> str:
     """Persist *log_data* as a JSON file inside LOG_DIR.
     Returns the absolute path to the log file."""
-    log_dir = _ensure_log_dir()
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_path = log_dir / f"clean_{timestamp}.json"
+    try:
+        log_dir = _ensure_log_dir()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_path = log_dir / f"clean_{timestamp}.json"
 
-    # Avoid overwriting a file created in the same second
-    counter = 1
-    while log_path.exists():
-        log_path = log_dir / f"clean_{timestamp}_{counter}.json"
-        counter += 1
+        # Avoid overwriting a file created in the same second
+        counter = 1
+        while log_path.exists():
+            log_path = log_dir / f"clean_{timestamp}_{counter}.json"
+            counter += 1
 
-    with open(log_path, "w", encoding="utf-8") as fh:
-        json.dump(log_data, fh, indent=2, default=str)
+        with open(log_path, "w", encoding="utf-8") as fh:
+            json.dump(log_data, fh, indent=2, default=str)
 
-    return str(log_path)
+        return str(log_path)
+    except OSError:
+        return ""
 
 
 # ─── Core Cleaning ───────────────────────────────────────────────────────────
