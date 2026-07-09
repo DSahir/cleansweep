@@ -311,7 +311,22 @@ def organizer_categorize():
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
+import webbrowser
+from threading import Timer
+
+def open_browser():
+    """Automatically open the default web browser to the local dashboard."""
+    try:
+        webbrowser.open_new(f"http://127.0.0.1:{FLASK_PORT}")
+    except Exception as e:
+        logger.error(f"Failed to open default web browser: {e}")
+
 if __name__ == "__main__":
     logger.info("🧹 CleanSweep — macOS System Optimizer")
     logger.info(f"   Dashboard: http://localhost:{FLASK_PORT}")
+    
+    # Only trigger browser auto-open if not running in Vercel serverless environment
+    if not os.environ.get("VERCEL") and not os.environ.get("WERKZEUG_RUN_MAIN"):
+        Timer(1.5, open_browser).start()
+        
     app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)

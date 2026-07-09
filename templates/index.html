@@ -303,6 +303,145 @@
             color: #FFFFFF;
         }
 
+        /* Download Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.2rem;
+            max-width: 520px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            text-align: left;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: color 0.15s ease;
+        }
+
+        .modal-close:hover {
+            color: #FFFFFF;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.03em;
+        }
+
+        .modal-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 1.8rem;
+        }
+
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .download-opt {
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .download-opt:hover {
+            border-color: var(--border-hover);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .opt-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .opt-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .opt-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .cli-instructions {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.2rem;
+        }
+
+        .cli-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .cli-code {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #A855F7;
+            overflow-x: auto;
+        }
+
         /* Who it's for Strip */
         .for-strip {
             border-top: 1px solid var(--border-color);
@@ -683,7 +822,6 @@
     <!-- Header Navigation -->
     <nav>
         <div class="nav-logo">
-            <!-- Sleek broom icon -->
             <svg viewBox="0 0 24 24" width="20" height="20">
                 <path d="M19.5 3.5a1 1 0 0 0-1.4 0L14 7.6 12 5.6a1 1 0 0 0-1.4 1.4l2 2-3.1 3.1-4-4a1 1 0 1 0-1.4 1.4l4 4-2.2 2.2c-.8.8-.8 2 0 2.8l2.5 2.5c.8.8 2 .8 2.8 0l2.2-2.2 4 4a1 1 0 1 0 1.4-1.4l-4-4 3.1-3.1 2 2a1 1 0 1 0 1.4-1.4l-2-2 4.1-4.1a1 1 0 0 0 0-1.4zM9 19.5c-.3 0-.5-.1-.7-.3l-2.5-2.5c-.4-.4-.4-1 0-1.4l1.5-1.5 3.9 3.9-1.5 1.5c-.2.2-.4.3-.7.3z" fill="#FFFFFF"/>
             </svg>
@@ -694,7 +832,7 @@
             <a href="#dashboard" class="nav-link">Optimizer</a>
             <a href="#" class="nav-link">Docs</a>
             <a href="#" class="nav-link">GitHub</a>
-            <button class="btn-nav" onclick="scrollToDashboard()">Scan Now</button>
+            <button class="btn-nav" onclick="openDownloadModal()">Download</button>
         </div>
     </nav>
 
@@ -706,11 +844,10 @@
                 CleanSweep audits storage folders, sweeps hidden system caches, and optimizes your workspace. Secure, offline, and built for macOS.
             </p>
             <div class="hero-actions">
-                <button class="btn btn-primary" onclick="scrollToDashboard()">Scan System Caches</button>
-                <button class="btn btn-secondary" onclick="scrollToDashboard()">Audit Home Directory</button>
+                <button class="btn btn-primary" onclick="openDownloadModal()">Download for macOS</button>
+                <button class="btn btn-secondary" onclick="scrollToDashboard()">See how it works</button>
             </div>
             <div class="trust-line">
-                <!-- Lock Icon -->
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -761,6 +898,52 @@
         </div>
     </section>
 
+    <!-- Download Options Modal -->
+    <div class="modal-overlay" id="download-modal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeDownloadModal()">&times;</button>
+            <h3 class="modal-title">Get CleanSweep</h3>
+            <p class="modal-desc">
+                CleanSweep runs directly on your local system to safeguard your privacy and access local caches. Choose your installation method:
+            </p>
+            
+            <div class="download-options">
+                <!-- macOS Option -->
+                <a href="https://github.com/DSahir/cleansweep/releases" target="_blank" class="download-opt">
+                    <div class="opt-meta">
+                        <span class="opt-title">Download for macOS (.dmg)</span>
+                        <span class="opt-desc">Includes direct auto-open interface and safe cache cleaners</span>
+                    </div>
+                    <!-- Download Icon -->
+                    <svg class="download-icon" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"/>
+                    </svg>
+                </a>
+                
+                <!-- Windows Option -->
+                <a href="https://github.com/DSahir/cleansweep/releases" target="_blank" class="download-opt">
+                    <div class="opt-meta">
+                        <span class="opt-title">Download for Windows (.exe)</span>
+                        <span class="opt-desc">Standalone package including local temp scanning</span>
+                    </div>
+                    <svg class="download-icon" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Terminal Run details -->
+            <div class="cli-instructions">
+                <h4 class="cli-title">Run via Git & Python Terminal</h4>
+                <div class="cli-code">
+                    git clone https://github.com/DSahir/cleansweep.git<br>
+                    cd cleansweep<br>
+                    python3 app.py
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Who it's for Strip -->
     <section class="for-strip">
         <div class="for-container">
@@ -784,7 +967,6 @@
         <h2 class="section-title">A 3-Step Optimizer Flow</h2>
         <div class="flow-grid">
             <div class="flow-step">
-                <!-- Dashboard Icon -->
                 <svg class="step-icon" viewBox="0 0 24 24">
                     <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" />
                     <path d="M9 17v-5M15 17V7" stroke="currentColor" />
@@ -793,7 +975,6 @@
                 <p>Watch system activity load to catch background applications hogging resource headroom.</p>
             </div>
             <div class="flow-step">
-                <!-- Folder Search Icon -->
                 <svg class="step-icon" viewBox="0 0 24 24">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" stroke="currentColor" />
                     <circle cx="12" cy="13" r="3" stroke="currentColor" />
@@ -802,7 +983,6 @@
                 <p>Analyze directories and breakdown files by categories (Code, Images, Documents).</p>
             </div>
             <div class="flow-step">
-                <!-- Sparkle Clean Icon -->
                 <svg class="step-icon" viewBox="0 0 24 24">
                     <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" />
                 </svg>
@@ -819,7 +999,6 @@
         <div class="dashboard-panel">
             <div class="panel-top">
                 <div class="panel-heading">
-                    <!-- Storage Graph Icon -->
                     <svg class="panel-icon" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 2v10h10" />
@@ -843,7 +1022,6 @@
         <div class="dashboard-panel">
             <div class="panel-top">
                 <div class="panel-heading">
-                    <!-- Clean Broom Icon -->
                     <svg class="panel-icon" viewBox="0 0 24 24">
                         <path d="M18 3L6 15M6 15v3h3l12-12zM3 21h18"/>
                     </svg>
@@ -868,7 +1046,7 @@
     <section class="closing-band">
         <h2>Ready to optimize your workspace?</h2>
         <p>Scrub cache locks, analyze directory branches, and accelerate system performance.</p>
-        <button class="btn btn-primary btn-large" onclick="scrollToDashboard()">Get Started Now</button>
+        <button class="btn btn-primary btn-large" onclick="openDownloadModal()">Download CleanSweep</button>
     </section>
 
     <!-- Footer -->
@@ -891,15 +1069,12 @@
                 const res = await fetch('/api/system/stats');
                 const data = await res.json();
                 if(data.cpu_percent !== undefined) {
-                    // CPU text and progress width
                     document.getElementById('cpu-val').innerText = `${data.cpu_percent}%`;
                     document.getElementById('cpu-bar').style.width = `${data.cpu_percent}%`;
 
-                    // Memory used/total and progress width
                     document.getElementById('mem-val').innerText = `${data.memory_used} / ${data.memory_total}`;
                     document.getElementById('mem-bar').style.width = `${data.memory_percent}%`;
 
-                    // Disk used/total and progress width
                     document.getElementById('disk-val').innerText = `${data.disk_used} / ${data.disk_total}`;
                     document.getElementById('disk-bar').style.width = `${data.disk_percent}%`;
                 }
@@ -1039,6 +1214,22 @@
 
         function scrollToDashboard() {
             document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openDownloadModal() {
+            document.getElementById('download-modal').classList.add('active');
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('download-modal').classList.remove('active');
+        }
+
+        // Close modal on click outside card
+        window.onclick = function(event) {
+            const modal = document.getElementById('download-modal');
+            if (event.target == modal) {
+                closeDownloadModal();
+            }
         }
 
         // Init
