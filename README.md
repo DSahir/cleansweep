@@ -42,6 +42,13 @@ CleanSweep operates in a hybrid, local-first configuration to ensure absolute da
 | **Host Telemetry (CPU/RAM/Disk)** | ⚠️ Simulated Mockup Stats | ✅ Real-Time Local Hooks |
 | **Privacy & Offline Guarantee** | ✅ Static Shell (No local reads) | ✅ 100% Offline (No external connections) |
 
+### Completely Local Components & Files
+
+The following directories, files, and build configurations perform operations strictly on the local machine and are fully disabled or mocked in the hosted cloud environment:
+- **`scanner/` (Telemetry & Audits):** Interrogates local hardware and directories. This contains `storage_analyzer.py` (uses `psutil` for physical disk usage), `cache_scanner.py` (identifies system/app cache folders), `access_analyzer.py` (scans recent files), `env_detector.py` (package managers), and `file_categorizer.py`.
+- **`cleaner/` (Active File Manipulation):** Performs cleanups and packaging. This contains `cache_cleaner.py` (core deletion logic), `env_cleaner.py` (compiler/Docker cleanup), and `file_archiver.py` (tar/zip file packaging).
+- **Local Packaging & Setup:** The Homebrew formula installer (`cleansweep.rb`), Python dependencies configuration (`requirements.txt`), and the local virtual environment (`.venv`).
+
 ---
 
 ## 📦 Platform Support Matrix

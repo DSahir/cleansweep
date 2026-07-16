@@ -483,6 +483,16 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <h3>Completely Local Components &amp; Files</h3>
+                <p>
+                    The following directories, files, and build configurations perform operations strictly on the local machine and are fully disabled or mocked in the cloud environment:
+                </p>
+                <ul>
+                    <li><strong><code>scanner/</code> (Telemetry &amp; Audits):</strong> Interrogates your local hardware and directories. This contains <code>storage_analyzer.py</code> (using <code>psutil</code> for physical disk usage), <code>cache_scanner.py</code> (identifying system and app cache folders), <code>access_analyzer.py</code> (scanning recent files), <code>env_detector.py</code> (package managers), and <code>file_categorizer.py</code>.</li>
+                    <li><strong><code>cleaner/</code> (Active File Manipulation):</strong> Performs destructive cleanups and packaging. This contains <code>cache_cleaner.py</code> (core deletion logic), <code>env_cleaner.py</code> (system compiler/Docker cleanup), and <code>file_archiver.py</code> (tar/zip file packaging).</li>
+                    <li><strong>Local Packaging &amp; Setup:</strong> The Homebrew formula installer (<code>cleansweep.rb</code>), Python dependencies configuration (<code>requirements.txt</code>), and the local virtual environment (<code>.venv</code>).</li>
+                </ul>
             </section>
 
             <section class="docs-section" id="privacy-model">
